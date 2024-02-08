@@ -1,29 +1,11 @@
+#include "display.h"
 #include <SDL.h>
 #include <stdbool.h>
 #include <stdio.h>
 
-#define CELL_SCALE 10
-#define WINDOW_WIDTH (64 * CELL_SCALE)
-#define WINDOW_HEIGHT (32 * CELL_SCALE)
-
 void handle_key(SDL_KeyCode code)
 {
   SDL_Log("Key pressed: %d", code);
-}
-
-int draw_cell(SDL_Renderer *renderer, int x, int y, bool fill)
-{
-  SDL_Rect rect = {x * CELL_SCALE, y * CELL_SCALE, CELL_SCALE, CELL_SCALE};
-
-  if (!fill) {
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-  } else {
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-  }
-
-  int status = SDL_RenderFillRect(renderer, &rect);
-  SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-  return status;
 }
 
 int main()
@@ -49,6 +31,10 @@ int main()
 
   bool quit = false;
 
+  draw_sprite(0, 0, 15);
+  draw_sprite(0, 7, 15);
+  render_screen(renderer);
+
   while (!quit) {
     SDL_Event e;
     while (SDL_PollEvent(&e) != 0) {
@@ -58,11 +44,7 @@ int main()
       }
     }
 
-    SDL_RenderClear(renderer);
-    draw_cell(renderer, 32, 16, true);
-    SDL_RenderPresent(renderer);
-
-    SDL_Delay(100);
+    SDL_Delay(10);
   };
 
   SDL_DestroyWindow(window);
