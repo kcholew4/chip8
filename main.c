@@ -8,6 +8,22 @@ void handle_key(SDL_KeyCode code)
   SDL_Log("Key pressed: %d", code);
 }
 
+void display_predefined(CPU *cpu)
+{
+  clear_screen(cpu->display);
+  for (int i = 0; i < 0x10; i++) {
+    cpu->I = i * 5;
+
+    int column = i % 4;
+    int row = i / 4;
+
+    cpu->V[0] = column * 5;
+    cpu->V[1] = row * 6;
+    execute(cpu, 0xD015);
+  }
+  render_screen(cpu->display);
+}
+
 int main()
 {
   SDL_Init(SDL_INIT_VIDEO);
@@ -36,8 +52,7 @@ int main()
   Memory *memory = create_memory();
   CPU *cpu = create_cpu(memory, display);
 
-  clear_screen(display);
-  execute(cpu, 0xD005);
+  display_predefined(cpu);
 
   while (!quit) {
     while (SDL_PollEvent(&e) != 0) {
