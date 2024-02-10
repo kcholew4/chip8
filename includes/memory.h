@@ -4,6 +4,7 @@
 
 typedef struct {
   uint8_t bytes[0xF000];
+  uint16_t stack[0x10];
   bool error;
 } Memory;
 

@@ -3,6 +3,7 @@
 #include "memory.h"
 #include <stdbool.h>
 #include <stdint.h>
+#include <time.h>
 
 typedef struct {
   uint8_t V[16];
