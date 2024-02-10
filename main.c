@@ -1,4 +1,4 @@
-#include "display.h"
+#include "cpu.h"
 #include <SDL.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -32,21 +32,19 @@ int main()
   bool quit = false;
   SDL_Event e;
 
+  Display *display = create_display(renderer);
+  Memory *memory = create_memory();
+  CPU *cpu = create_cpu(memory, display);
+
+  clear_screen(display);
+  execute(cpu, 0xD005);
+
   while (!quit) {
     while (SDL_PollEvent(&e) != 0) {
       switch (e.type) {
       case SDL_QUIT: quit = true; break;
       }
     }
-
-    clear_screen(renderer);
-
-    draw_sprite(renderer, 0, 0, 15);
-    draw_sprite(renderer, 0, 7, 15);
-    draw_sprite(renderer, 32, 10, 15);
-    draw_sprite(renderer, 36, 6, 10);
-
-    render_screen(renderer);
 
     SDL_Delay(20);
   };
