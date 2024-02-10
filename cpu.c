@@ -1,6 +1,6 @@
-#include "cpu.h"
-#include "display.h"
-#include "memory.h"
+#include "includes/cpu.h"
+#include "includes/display.h"
+#include "includes/memory.h"
 
 CPU *create_cpu(Memory *memory, Display *display)
 {
@@ -28,9 +28,10 @@ void execute(CPU *cpu, uint16_t instruction)
       sprite[i] = read_memory_byte(cpu->memory, cpu->I + i);
     }
 
-    draw_sprite(cpu->display, sprite, n, x, y);
+    draw_sprite(cpu->display, sprite, n, cpu->V[x], cpu->V[y]);
     render_screen(cpu->display);
 
+    free(sprite);
     break;
   }
   case 0xA000: {

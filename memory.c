@@ -1,4 +1,4 @@
-#include "memory.h"
+#include "includes/memory.h"
 #include <stdlib.h>
 
 /* Predefined spirtes representing hexadecimal digits (0-F) */
