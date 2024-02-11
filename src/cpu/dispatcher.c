@@ -1,4 +1,4 @@
-#include "includes/dispatcher.h"
+#include "dispatcher.h"
 
 CpuInstruction *instructions_table[0xFFFF + 1];
 

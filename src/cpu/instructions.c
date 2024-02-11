@@ -1,5 +1,5 @@
-#include "includes/instructions.h"
-#include "includes/display.h"
+#include "instructions.h"
+#include "display.h"
 
 /*
 nnn or addr - A 12-bit value, the lowest 12 bits of the instruction
@@ -36,12 +36,13 @@ uint8_t _get_byte(uint16_t opcode)
 
 void cpu_cls(CPU *cpu, uint16_t opcode)
 {
-  clear_screen(cpu->display);
+  if (cpu->display_controller == NULL) { return; }
+  cpu->display_controller->clear();
 }
 
 void cpu_ret(CPU *cpu, uint16_t opcode)
 {
-  cpu->PC = cpu->memory->stack[cpu->SP--];
+  cpu->PC = cpu->stack[--cpu->SP];
 }
 
 void cpu_jp(CPU *cpu, uint16_t opcode)
@@ -53,7 +54,7 @@ void cpu_jp(CPU *cpu, uint16_t opcode)
 void cpu_call(CPU *cpu, uint16_t opcode)
 {
   uint16_t addr = _get_addr(opcode);
-  cpu->memory->stack[cpu->SP++] = cpu->PC;
+  cpu->stack[cpu->SP++] = cpu->PC;
   cpu->PC = addr;
 }
 
@@ -202,6 +203,10 @@ void cpu_rnd_vx(CPU *cpu, uint16_t opcode)
 
 void cpu_drw_vx_vy(CPU *cpu, uint16_t opcode)
 {
+  if (cpu->memory_controller == NULL || cpu->display_controller == NULL) {
+    return;
+  }
+
   int x = _get_x(opcode);
   int y = _get_y(opcode);
   uint8_t n = _get_nibble(opcode);
@@ -209,11 +214,10 @@ void cpu_drw_vx_vy(CPU *cpu, uint16_t opcode)
   uint8_t *sprite = malloc(sizeof(uint8_t) * n);
 
   for (int i = 0; i < n; i++) {
-    sprite[i] = read_memory_byte(cpu->memory, cpu->I + i);
+    sprite[i] = cpu->memory_controller->read(cpu->I + i);
   }
 
-  draw_sprite(cpu->display, sprite, n, cpu->V[x], cpu->V[y]);
-
+  cpu->display_controller->draw(sprite, n, cpu->V[x], cpu->V[y]);
   free(sprite);
 }
 
@@ -260,29 +264,35 @@ void cpu_ld_f_vx(CPU *cpu, uint16_t opcode)
 
 void cpu_ld_b_vx(CPU *cpu, uint16_t opcode)
 {
+  if (cpu->memory_controller == NULL) { return; }
+
   uint8_t vx = cpu->V[_get_x(opcode)];
 
   uint8_t hundreds = vx / 100;
   uint8_t tens = (vx - hundreds) / 10;
   uint8_t ones = vx - hundreds - tens;
 
-  write_memory_byte(cpu->memory, cpu->I, hundreds);
-  write_memory_byte(cpu->memory, cpu->I + 1, tens);
-  write_memory_byte(cpu->memory, cpu->I + 2, ones);
+  cpu->memory_controller->write(cpu->I, hundreds);
+  cpu->memory_controller->write(cpu->I + 1, tens);
+  cpu->memory_controller->write(cpu->I + 2, ones);
 }
 
 void cpu_ld_i_vx(CPU *cpu, uint16_t opcode)
 {
+  if (cpu->memory_controller == NULL) { return; }
+
   int x = _get_x(opcode);
   for (int i = 0; i <= x; i++) {
-    write_memory_byte(cpu->memory, cpu->I + i, cpu->V[i]);
+    cpu->memory_controller->write(cpu->I + i, cpu->V[i]);
   }
 }
 
 void cpu_ld_vx_i(CPU *cpu, uint16_t opcode)
 {
+  if (cpu->memory_controller == NULL) { return; }
+
   int x = _get_x(opcode);
   for (int i = 0; i <= x; i++) {
-    cpu->V[i] = read_memory_byte(cpu->memory, cpu->I + i);
+    cpu->V[i] = cpu->memory_controller->read(cpu->I + i);
   }
 }

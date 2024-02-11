@@ -1,8 +1,6 @@
-#include "includes/cpu.h"
-#include "includes/dispatcher.h"
-#include "includes/display.h"
-#include "includes/instructions.h"
-#include "includes/memory.h"
+#include "cpu.h"
+#include "dispatcher.h"
+#include "instructions.h"
 
 void _cpu_init()
 {
@@ -43,18 +41,33 @@ void _cpu_init()
   dispatcher_register(0xF065, 0x0F00, cpu_ld_vx_i);  // Fx65 - LD Vx, [I]
 }
 
-CPU *create_cpu(Memory *memory, Display *display)
+CPU *cpu_create()
 {
   CPU *cpu = calloc(1, sizeof(CPU));
-  cpu->memory = memory;
-  cpu->display = display;
   srand(time(NULL));
   _cpu_init();
   return cpu;
 }
 
-void execute(CPU *cpu, uint16_t opcode)
+void cpu_set_memory_controller(CPU *cpu, MemoryController *memory_controller)
 {
+  cpu->memory_controller = memory_controller;
+}
+
+void cpu_set_display_controller(CPU *cpu, DisplayController *display_controller)
+{
+  cpu->display_controller = display_controller;
+}
+
+void cpu_execute(CPU *cpu, uint16_t opcode)
+{
+  cpu->PC++;
   CpuInstruction *cpu_instruction = instructions_table[opcode];
+
+  if (cpu_instruction == NULL) {
+    printf("undefined instruction: %x\n", opcode);
+    return;
+  }
+
   cpu_instruction(cpu, opcode);
 }
