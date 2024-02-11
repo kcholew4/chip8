@@ -1,5 +1,4 @@
 #include "instructions.h"
-#include "display.h"
 
 /*
 nnn or addr - A 12-bit value, the lowest 12 bits of the instruction
