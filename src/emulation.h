@@ -1,0 +1,1 @@
+void emulation_init(char executable[]);

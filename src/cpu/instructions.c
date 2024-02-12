@@ -213,7 +213,7 @@ void cpu_drw_vx_vy(CPU *cpu, uint16_t opcode)
   uint8_t *sprite = malloc(sizeof(uint8_t) * n);
 
   for (int i = 0; i < n; i++) {
-    sprite[i] = cpu->memory_controller->read(cpu->I + i);
+    sprite[i] = cpu->memory_controller->read_byte(cpu->I + i);
   }
 
   cpu->display_controller->draw(sprite, n, cpu->V[x], cpu->V[y]);
@@ -292,6 +292,6 @@ void cpu_ld_vx_i(CPU *cpu, uint16_t opcode)
 
   int x = _get_x(opcode);
   for (int i = 0; i <= x; i++) {
-    cpu->V[i] = cpu->memory_controller->read(cpu->I + i);
+    cpu->V[i] = cpu->memory_controller->read_byte(cpu->I + i);
   }
 }

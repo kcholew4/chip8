@@ -1,37 +1,33 @@
 #include "display.h"
+#include "controllers.h"
 
-Display *create_display(SDL_Renderer *renderer)
-{
-  Display *display = calloc(1, sizeof(Display));
-  display->renderer = renderer;
-  return display;
-}
+bool pixels[64][32];
+SDL_Renderer *renderer;
+SDL_Window *window;
 
-void clear_screen(Display *display)
+void display_clear()
 {
-  // SDL_SetRenderDrawColor(display->renderer, 0, 0, 0, 255);
-  // SDL_RenderClear(display->renderer);
   for (int i = 0; i < 64; i++) {
-    for (int j = 0; j < 32; j++) { display->pixels[i][j] = false; }
+    for (int j = 0; j < 32; j++) { pixels[i][j] = false; }
   }
 }
 
-void render_screen(Display *display)
+void display_render()
 {
-  SDL_SetRenderDrawColor(display->renderer, 0, 0, 0, 255);
-  SDL_RenderClear(display->renderer);
+  SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+  SDL_RenderClear(renderer);
   for (int x = 0; x < 64; x++) {
     for (int y = 0; y < 32; y++) {
-      if (!display->pixels[x][y]) { continue; }
+      if (!pixels[x][y]) { continue; }
 
       SDL_Rect rect = {(x * CELL_SCALE), (y * CELL_SCALE), CELL_SCALE,
                        CELL_SCALE};
-      SDL_SetRenderDrawColor(display->renderer, 255, 255, 255, 255);
+      SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
-      SDL_RenderFillRect(display->renderer, &rect);
+      SDL_RenderFillRect(renderer, &rect);
     }
   }
-  SDL_RenderPresent(display->renderer);
+  SDL_RenderPresent(renderer);
 }
 
 bool *sprite_to_bits(uint8_t *sprite, int n)
@@ -49,7 +45,7 @@ bool *sprite_to_bits(uint8_t *sprite, int n)
 }
 
 // Put sprite in displays's memory
-bool draw_sprite(Display *display, uint8_t *sprite, int n, int x, int y)
+bool display_draw(uint8_t *sprite, int n, int x, int y)
 {
   bool collision = false;
   bool *sprite_bits = sprite_to_bits(sprite, n);
@@ -60,7 +56,7 @@ bool draw_sprite(Display *display, uint8_t *sprite, int n, int x, int y)
     int collumn = drawn % 8 + x;
     int row = drawn / 8 + y;
 
-    bool current_cell = display->pixels[collumn][row];
+    bool current_cell = pixels[collumn][row];
     bool next_cell = current_cell ^ sprite_bits[drawn];
 
     if (current_cell == next_cell) {
@@ -68,9 +64,45 @@ bool draw_sprite(Display *display, uint8_t *sprite, int n, int x, int y)
       continue;
     }
 
-    display->pixels[collumn][row] = next_cell;
+    pixels[collumn][row] = next_cell;
     drawn++;
   }
   free(sprite_bits);
   return collision;
+}
+
+bool display_init()
+{
+  window =
+      SDL_CreateWindow("Chip8 Emulator", SDL_WINDOWPOS_UNDEFINED,
+                       SDL_WINDOWPOS_UNDEFINED, WINDOW_WIDTH, WINDOW_HEIGHT, 0);
+
+  if (window == NULL) {
+    SDL_Log("Could not create window: %s", SDL_GetError());
+    return false;
+  }
+
+  renderer = SDL_CreateRenderer(window, 0, SDL_RENDERER_PRESENTVSYNC);
+
+  if (renderer == NULL) {
+    SDL_Log("Could not create renderer: %s", SDL_GetError());
+    SDL_DestroyWindow(window);
+    return false;
+  }
+
+  return true;
+}
+
+void display_destroy()
+{
+  SDL_DestroyRenderer(renderer);
+  SDL_DestroyWindow(window);
+}
+
+DisplayController *display_create_controller()
+{
+  DisplayController *display_controller = malloc(sizeof(DisplayController));
+  display_controller->draw = display_draw;
+  display_controller->clear = display_clear;
+  return display_controller;
 }

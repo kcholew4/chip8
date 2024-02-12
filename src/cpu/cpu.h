@@ -1,19 +1,10 @@
 #pragma once
+#include "controllers.h"
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-
-typedef struct {
-  void (*write)(uint16_t address, uint8_t byte);
-  uint8_t (*read)(uint16_t address);
-} MemoryController;
-
-typedef struct {
-  void (*draw)(uint8_t *sprite, int n, int x, int y);
-  void (*clear)();
-} DisplayController;
 
 typedef struct {
   uint8_t V[16];

@@ -68,7 +68,7 @@ uint16_t cpu_fetch(CPU *cpu)
     return 0x0000;
   }
 
-  uint16_t opcode = cpu->memory_controller->read(cpu->PC);
+  uint16_t opcode = cpu->memory_controller->read_opcode(cpu->PC);
   cpu->PC += 2;
   return opcode;
 }

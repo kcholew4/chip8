@@ -1,4 +1,5 @@
 #pragma once
+#include "controllers.h"
 #include <SDL.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -7,12 +8,9 @@
 #define WINDOW_WIDTH (64 * CELL_SCALE)
 #define WINDOW_HEIGHT (32 * CELL_SCALE)
 
-typedef struct {
-  bool pixels[64][32];
-  SDL_Renderer *renderer;
-} Display;
+bool display_init();
+void display_destroy();
 
-Display *create_display(SDL_Renderer *renderer);
-bool draw_sprite(Display *display, uint8_t *sprite, int size, int x, int y);
-void clear_screen(Display *display);
-void render_screen(Display *display);
+// To use this function display_init() must be called first
+void display_render();
+DisplayController *display_create_controller();

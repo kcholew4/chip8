@@ -1,5 +1,8 @@
 #include "memory.h"
+#include "controllers.h"
 #include <stdlib.h>
+
+uint8_t memory[0xF000];
 
 /* Predefined spirtes representing hexadecimal digits (0-F) */
 const uint8_t sprites[80] = {
@@ -12,21 +15,35 @@ const uint8_t sprites[80] = {
     0xF0, 0x80, 0xF0, 0xF0, 0x80, 0xF0, 0x80, 0x80,
 };
 
-uint8_t memory_read_byte(Memory *memory, uint16_t address)
+void memory_init()
 {
-  return memory->bytes[address];
-}
-
-void write_memory_byte(Memory *memory, uint16_t address, uint8_t byte)
-{
-  memory->bytes[address] = byte;
-}
-
-Memory *memory_create()
-{
-  Memory *memory = calloc(1, sizeof(Memory));
   for (int i = 0; i < sizeof(sprites) / sizeof(uint8_t); i++) {
-    memory->bytes[i] = sprites[i];
+    memory[i] = sprites[i];
   }
-  return memory;
+}
+
+uint8_t memory_read_byte(uint16_t address)
+{
+  return memory[address];
+}
+
+uint16_t memory_read_opcode(uint16_t address)
+{
+  uint16_t upper_byte = memory[address] << 8;
+  uint16_t lower_byte = memory[address + 1];
+  return upper_byte | lower_byte;
+}
+
+void memory_write(uint16_t address, uint8_t byte)
+{
+  memory[address] = byte;
+}
+
+MemoryController *memory_create_controller()
+{
+  MemoryController *memory_controller = malloc(sizeof(MemoryController));
+  memory_controller->read_byte = memory_read_byte;
+  memory_controller->read_opcode = memory_read_opcode;
+  memory_controller->write = memory_write;
+  return memory_controller;
 }
