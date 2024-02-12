@@ -14,3 +14,4 @@ void display_destroy();
 // To use this function display_init() must be called first
 void display_render();
 DisplayController *display_create_controller();
+extern bool display_pending_render;

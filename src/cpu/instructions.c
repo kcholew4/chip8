@@ -216,7 +216,7 @@ void cpu_drw_vx_vy(CPU *cpu, uint16_t opcode)
     sprite[i] = cpu->memory_controller->read_byte(cpu->I + i);
   }
 
-  cpu->display_controller->draw(sprite, n, cpu->V[x], cpu->V[y]);
+  cpu->V[0xF] = cpu->display_controller->draw(sprite, n, cpu->V[x], cpu->V[y]);
   free(sprite);
 }
 

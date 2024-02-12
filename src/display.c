@@ -2,11 +2,13 @@
 #include "controllers.h"
 
 bool pixels[64][32];
+bool display_pending_render = false;
 SDL_Renderer *renderer;
 SDL_Window *window;
 
 void display_clear()
 {
+  display_pending_render = true;
   for (int i = 0; i < 64; i++) {
     for (int j = 0; j < 32; j++) { pixels[i][j] = false; }
   }
@@ -28,6 +30,7 @@ void display_render()
     }
   }
   SDL_RenderPresent(renderer);
+  display_pending_render = false;
 }
 
 bool *sprite_to_bits(uint8_t *sprite, int n)
@@ -47,14 +50,15 @@ bool *sprite_to_bits(uint8_t *sprite, int n)
 // Put sprite in displays's memory
 bool display_draw(uint8_t *sprite, int n, int x, int y)
 {
+  display_pending_render = true;
   bool collision = false;
   bool *sprite_bits = sprite_to_bits(sprite, n);
   int bits_to_draw = 8 * n;
   int drawn = 0;
 
   while (drawn < bits_to_draw) {
-    int collumn = drawn % 8 + x;
-    int row = drawn / 8 + y;
+    int collumn = (drawn % 8) + (x % 64);
+    int row = (drawn / 8) + (y % 32);
 
     bool current_cell = pixels[collumn][row];
     bool next_cell = current_cell ^ sprite_bits[drawn];
@@ -82,7 +86,7 @@ bool display_init()
     return false;
   }
 
-  renderer = SDL_CreateRenderer(window, 0, SDL_RENDERER_PRESENTVSYNC);
+  renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
   if (renderer == NULL) {
     SDL_Log("Could not create renderer: %s", SDL_GetError());

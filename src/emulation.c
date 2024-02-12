@@ -59,19 +59,41 @@ void emulation_init(char executable[])
 
   SDL_Log("File read correctly");
 
+  uint64_t frames = 0;
+  uint64_t instructions = 0;
+
+  uint64_t runtime_start = SDL_GetTicks64();
+
   while (!quit) {
+    uint64_t frame_start = SDL_GetTicks64();
+
     while (SDL_PollEvent(&e) != 0) {
       switch (e.type) {
       case SDL_QUIT: quit = true; break;
       }
     }
 
-    uint16_t opcode = cpu_fetch(cpu);
-    cpu_execute(cpu, opcode);
-    display_render();
+    while (!display_pending_render) {
+      uint16_t opcode = cpu_fetch(cpu);
+      cpu_execute(cpu, opcode);
+      instructions++;
+    }
 
-    SDL_Delay(20);
+    display_render();
+    frames++;
+
+    uint64_t frame_time = frame_start - SDL_GetTicks64();
+    // There are better ways
+    if ((1000 / 60) > frame_time) { SDL_Delay((1000 / 60) - frame_time); }
   };
+
+  double runtime = (double)(SDL_GetTicks64() - runtime_start) / 1000;
+
+  SDL_Log("Frames: %llu", frames);
+  SDL_Log("Instructions: %llu", instructions);
+  SDL_Log("Run time: %fs", runtime);
+  SDL_Log("Average FPS: %f", frames / runtime);
+  SDL_Log("Average instructions/s: %f", instructions / runtime);
 
   SDL_Quit();
 }
