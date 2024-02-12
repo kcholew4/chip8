@@ -157,19 +157,19 @@ void cpu_subn_vx_vy(CPU *cpu, uint16_t opcode)
   int x = _get_x(opcode);
   int y = _get_y(opcode);
 
-  if (cpu->V[y] >= cpu->V[x]) {
+  if (cpu->V[y] > cpu->V[x]) {
     cpu->V[0xF] = 1;
   } else {
     cpu->V[0xF] = 0;
   }
 
-  cpu->V[y] -= cpu->V[x];
+  cpu->V[x] = cpu->V[y] - cpu->V[x];
 }
 
 void cpu_shl_vx_vy(CPU *cpu, uint16_t opcode)
 {
   int x = _get_x(opcode);
-  cpu->V[0xF] = (cpu->V[x] & 0x8000) >> 15;
+  cpu->V[0xF] = (cpu->V[x] & 0x0080) >> 7;
   cpu->V[x] <<= 1;
 }
 
@@ -182,14 +182,14 @@ void cpu_sne_vx_vy(CPU *cpu, uint16_t opcode)
 
 void cpu_ld_i(CPU *cpu, uint16_t opcode)
 {
-  uint16_t nnn = _get_byte(opcode);
-  cpu->I = nnn;
+  uint16_t addr = _get_addr(opcode);
+  cpu->I = addr;
 }
 
 void cpu_jp_v0(CPU *cpu, uint16_t opcode)
 {
-  uint16_t nnn = _get_byte(opcode);
-  cpu->PC = nnn + cpu->V[0];
+  uint16_t addr = _get_addr(opcode);
+  cpu->PC = addr + cpu->V[0];
 }
 
 void cpu_rnd_vx(CPU *cpu, uint16_t opcode)
