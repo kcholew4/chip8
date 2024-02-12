@@ -49,6 +49,8 @@ CPU *cpu_create()
   return cpu;
 }
 
+// MemoryController and DisplayController can be unset for testing purposes
+
 void cpu_set_memory_controller(CPU *cpu, MemoryController *memory_controller)
 {
   cpu->memory_controller = memory_controller;
@@ -59,9 +61,20 @@ void cpu_set_display_controller(CPU *cpu, DisplayController *display_controller)
   cpu->display_controller = display_controller;
 }
 
+uint16_t cpu_fetch(CPU *cpu)
+{
+  if (cpu->memory_controller == NULL) {
+    cpu->PC += 2;
+    return 0x0000;
+  }
+
+  uint16_t opcode = cpu->memory_controller->read(cpu->PC);
+  cpu->PC += 2;
+  return opcode;
+}
+
 void cpu_execute(CPU *cpu, uint16_t opcode)
 {
-  cpu->PC++;
   CpuInstruction *cpu_instruction = instructions_table[opcode];
 
   if (cpu_instruction == NULL) {
