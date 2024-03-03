@@ -95,7 +95,6 @@ uint16_t get_min_opcode(const char template[5], OpcodeVarType type)
 void opcode_register(const char template[5], CpuInstruction instruction,
                      const char disasm_template[20])
 {
-  printf("%s\n", template);
   OpcodeVarType type = get_type(template);
   uint16_t min_opcode = get_min_opcode(template, type);
 

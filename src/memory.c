@@ -1,8 +1,7 @@
 #include "memory.h"
-#include "controllers.h"
 #include <stdlib.h>
 
-uint8_t memory[0xF000];
+uint8_t memory[0x10000];
 
 /* Predefined spirtes representing hexadecimal digits (0-F) */
 const uint8_t sprites[80] = {
@@ -37,13 +36,4 @@ uint16_t memory_read_opcode(uint16_t address)
 void memory_write(uint16_t address, uint8_t byte)
 {
   memory[address] = byte;
-}
-
-MemoryController *memory_create_controller()
-{
-  MemoryController *memory_controller = malloc(sizeof(MemoryController));
-  memory_controller->read_byte = memory_read_byte;
-  memory_controller->read_opcode = memory_read_opcode;
-  memory_controller->write = memory_write;
-  return memory_controller;
 }

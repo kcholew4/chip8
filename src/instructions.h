@@ -1,6 +1,7 @@
 #pragma once
 #include "cpu.h"
 
+void cpu_sys(CPU *cpu, uint16_t opcode);
 void cpu_cls(CPU *cpu, uint16_t opcode);
 void cpu_ret(CPU *cpu, uint16_t opcode);
 void cpu_jp(CPU *cpu, uint16_t opcode);

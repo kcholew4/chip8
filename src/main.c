@@ -1,6 +1,8 @@
 #include "emulation.h"
 #include <stdio.h>
 
+#ifndef TEST_ENV
+
 int main(int argc, char *argv[])
 {
   if (argc != 2) {
@@ -11,3 +13,5 @@ int main(int argc, char *argv[])
   emulation_init(argv[1]);
   return 0;
 }
+
+#endif
