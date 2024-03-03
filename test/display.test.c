@@ -57,7 +57,7 @@ Test(display, draw_pixel_xor, .init = setup, .fini = teardown)
       display_render();
       SDL_PollEvent(NULL);
       cr_assert(display->pixels[x][y] == false,
-                "Pixel should be set to 0 at  (%d, %d)", x, y);
+                "Pixel should be set to 0 at (%d, %d)", x, y);
     }
   }
 }
