@@ -72,7 +72,7 @@ uint64_t get_timestamp()
 
 void check_timers()
 {
-  uint16_t timestamp = get_timestamp();
+  uint64_t timestamp = get_timestamp();
   const int duration = 1000 / 60;
   if (cpu->DT > 0 && cpu->dt_updated + duration <= timestamp) {
     cpu->dt_updated = timestamp;
@@ -93,14 +93,14 @@ void cpu_execute(uint16_t opcode)
     return;
   }
 
-  printf("%x: %s | PC: %04x -> %04x, SP: %04x, I: %04x\n", opcode,
-         opcode_info->disassembled, cpu->PC, memory_read_opcode(cpu->PC),
-         cpu->SP, cpu->I);
+  // printf("%x: %s | PC: %04x -> %04x, SP: %04x, I: %04x\n", opcode,
+  //        opcode_info->disassembled, cpu->PC, memory_read_opcode(cpu->PC),
+  //        cpu->SP, cpu->I);
 
   opcode_info->instruction(cpu, opcode);
 
-  printf("PC: %04x -> %04x, SP: %04x, I: %04x\n", cpu->PC,
-         memory_read_opcode(cpu->PC), cpu->SP, cpu->I);
+  // printf("PC: %04x -> %04x, SP: %04x, I: %04x\n", cpu->PC,
+  //        memory_read_opcode(cpu->PC), cpu->SP, cpu->I);
 }
 
 void cpu_cycle()
