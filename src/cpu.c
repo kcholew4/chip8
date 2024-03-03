@@ -6,7 +6,7 @@ CPU *cpu;
 
 void cpu_init()
 {
-  opcode_register("0nnn", cpu_sys, "SYS nnn");
+  // opcode_register("0nnn", cpu_sys, "SYS nnn");
   opcode_register("00E0", cpu_cls, "CLS");
   opcode_register("00EE", cpu_ret, "RET");
   opcode_register("1nnn", cpu_jp, "JP nnn");
@@ -93,14 +93,19 @@ void cpu_execute(uint16_t opcode)
     return;
   }
 
-  // printf("%x: %s | PC: %04x -> %04x, SP: %04x, I: %04x\n", opcode,
-  //        opcode_info->disassembled, cpu->PC, memory_read_opcode(cpu->PC),
-  //        cpu->SP, cpu->I);
+  if (cpu->step_execution) {
+    printf("%x: %s | PC: %04x -> %04x, SP: %04x, I: %04x\n", opcode,
+           opcode_info->disassembled, cpu->PC, memory_read_opcode(cpu->PC),
+           cpu->SP, cpu->I);
+  }
 
   opcode_info->instruction(cpu, opcode);
 
-  // printf("PC: %04x -> %04x, SP: %04x, I: %04x\n", cpu->PC,
-  //        memory_read_opcode(cpu->PC), cpu->SP, cpu->I);
+  if (cpu->step_execution) {
+    printf("PC: %04x -> %04x, SP: %04x, I: %04x\n", cpu->PC,
+           memory_read_opcode(cpu->PC), cpu->SP, cpu->I);
+    printf("---\n");
+  }
 }
 
 void cpu_cycle()

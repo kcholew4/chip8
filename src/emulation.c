@@ -54,6 +54,8 @@ void handle_key(SDL_KeyboardEvent key)
   case SDLK_x: cpu->key = 0x0; break;
   case SDLK_c: cpu->key = 0xB; break;
   case SDLK_v: cpu->key = 0xF; break;
+  case SDLK_k: cpu->step_execution = !cpu->step_execution; break;
+  case SDLK_l: cpu->paused = false; break;
   }
 }
 
@@ -86,7 +88,14 @@ void emulation_init(char executable[])
 
     sync();
 
-    for (int cycles = 0; cycles < 10; cycles++) { cpu_cycle(); }
+    for (int cycles = 0; cycles < 1000 && !display->pending_render; cycles++) {
+      if (cpu->step_execution && !cpu->paused) {
+        cpu_cycle();
+        cpu->paused = true;
+      }
+
+      if (!cpu->step_execution) { cpu_cycle(); }
+    }
 
     display_refresh();
 

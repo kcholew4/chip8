@@ -12,6 +12,8 @@
 typedef void (*CpuSync)();
 
 typedef struct {
+  bool step_execution;
+  bool paused;
   uint8_t V[16];
   uint16_t I;
   uint16_t PC;
