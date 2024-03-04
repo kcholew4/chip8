@@ -130,7 +130,11 @@ void cpu_add_vx_vy(CPU *cpu, uint16_t opcode)
   int y = _get_y(opcode);
 
   uint16_t sum = cpu->V[x] + cpu->V[y];
-  if (sum > 0xFF) { cpu->V[0xF] = 1; }
+  if (sum > 0xFF) {
+    cpu->V[0xF] = 1;
+  } else {
+    cpu->V[0xF] = 0;
+  }
 
   cpu->V[x] = sum & 0x00FF;
 }
