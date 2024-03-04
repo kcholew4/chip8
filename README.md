@@ -16,4 +16,4 @@ Press `k` to enter step execution mode and `l` to advance.
 
 ---
 
-![](https://raw.githubusercontent.com/kcholew4/chip8/main/demo/breakout.gif)
+![](https://raw.githubusercontent.com/kcholew4/chip8/main/gifs/breakout.gif)

@@ -55,3 +55,4 @@ unity/
 programs/
 roms/
 .vscode/
+app/*
