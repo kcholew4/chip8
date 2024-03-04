@@ -3,20 +3,16 @@ name: Publish app
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      -uses: actions/checkout@v4
-      -run: git clone https://github.com/emscripten-core/emsdk.git
-      -run: cd emsdk
-      -run: ./emsdk install latest
-      -run: ./emsdk activate latest
-      -run: source ./emsdk_env.sh
-      -run: cd ..
-      -uses: actions/checkout@v4
-      -run: source ./wasm_build.sh
-      -uses: actions/upload-pages-artifact@v3
-      with:
-        name: github-pages
-        path: app/
+      - uses: actions/checkout@v4
+      - run: git clone https://github.com/emscripten-core/emsdk.git
+      - run: cd emsdk && ./emsdk install latest && ./emsdk activate latest && source ./emsdk_env.sh
+      - run: mkdir app && ./emsdk/upstream/emscripten/emcc src/*.c -o app/index.html -sUSE_SDL=2
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          name: github-pages
+          path: app/
   publish:
     needs: build
     runs-on: ubuntu-latest
@@ -27,4 +23,4 @@ jobs:
       name: github-pages
       url: ${{steps.deployment.outputs.page_url}}
     steps:
-      uses: actions/deploy-pages@v4
+      - uses: actions/deploy-pages@v4
