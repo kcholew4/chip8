@@ -1,0 +1,1 @@
+emcc src/*.c -o app/chip8.html -sUSE_SDL=2 --preload-file ./roms

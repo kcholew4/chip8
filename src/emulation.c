@@ -1,6 +1,7 @@
 #include "emulation.h"
 #include "cpu.h"
 #include <SDL.h>
+#include <emscripten/emscripten.h>
 #include <stdbool.h>
 
 bool load_program(char name[])
@@ -73,8 +74,25 @@ void sync()
   }
 }
 
+void one_iter()
+{
+  sync();
+
+  for (int cycles = 0; cycles < 1000 && !display->pending_render; cycles++) {
+    if (cpu->step_execution && !cpu->paused) {
+      cpu_cycle();
+      cpu->paused = true;
+    }
+
+    if (!cpu->step_execution) { cpu_cycle(); }
+  }
+
+  display_refresh();
+}
+
 void emulation_init(char executable[])
 {
+  printf("emulation_init called\n");
   memory_init();
   display_init();
   SDL_Init(SDL_INIT_VIDEO);
@@ -83,25 +101,9 @@ void emulation_init(char executable[])
 
   if (!load_program(executable)) { quit = true; }
 
-  while (!quit) {
-    uint64_t frame_start = SDL_GetTicks64();
+  emscripten_set_main_loop(one_iter, 60, 1);
 
-    sync();
-
-    for (int cycles = 0; cycles < 1000 && !display->pending_render; cycles++) {
-      if (cpu->step_execution && !cpu->paused) {
-        cpu_cycle();
-        cpu->paused = true;
-      }
-
-      if (!cpu->step_execution) { cpu_cycle(); }
-    }
-
-    display_refresh();
-
-    uint64_t frame_time = SDL_GetTicks64() - frame_start;
-    if ((1000 / 60) > frame_time) { SDL_Delay((1000 / 60) - frame_time); }
-  };
-
+  display_destroy();
+  cpu_destroy();
   SDL_Quit();
 }
