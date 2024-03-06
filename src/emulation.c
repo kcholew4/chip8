@@ -29,7 +29,7 @@ bool load_program(char name[])
     return false;
   }
 
-  for (int i = 0; i < file_size; i++) { memory_write(0x200 + i, buffer[i]); }
+  memory_write_bytes(0x200, buffer, file_size);
 
   free(buffer);
   SDL_Log("File read correctly");
@@ -90,20 +90,35 @@ void one_iter()
   display_refresh();
 }
 
-void emulation_init(char executable[])
+void init_devices()
 {
-  printf("emulation_init called\n");
   memory_init();
-  display_init();
   SDL_Init(SDL_INIT_VIDEO);
-  cpu_create();
-  cpu->sync = sync;
+  display_init();
+}
 
-  if (!load_program(executable)) { quit = true; }
-
-  emscripten_set_main_loop(one_iter, 60, 1);
-
+void destroy_devices()
+{
+  memory_destroy();
   display_destroy();
   cpu_destroy();
+}
+
+void emulation_start()
+{
+  cpu_create();
+  cpu->sync = sync;
+  emscripten_set_main_loop(one_iter, 60, 1); // <-- or 1 here idk
+}
+
+void emulation_end()
+{
+  destroy_devices();
   SDL_Quit();
 }
+
+// void execute_file(char executable[])
+// {
+//   if (!load_program(executable)) { return; }
+//   // TODO: main loop for normal build target here
+// }

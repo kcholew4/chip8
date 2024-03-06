@@ -1,1 +1,1 @@
-emcc src/*.c -o app/chip8.html -sUSE_SDL=2 --preload-file ./roms
+emcc src/*.c -o app/build/index.html -sUSE_SDL=2 -sEXPORTED_RUNTIME_METHODS=ccall,cwrap --shell-file app/template/shell.html

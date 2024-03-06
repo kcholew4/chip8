@@ -1,7 +1,10 @@
 #include "memory.h"
+#include <stddef.h>
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-uint8_t memory[0x10000];
+uint8_t *memory;
 
 /* Predefined spirtes representing hexadecimal digits (0-F) */
 const uint8_t sprites[80] = {
@@ -13,13 +16,6 @@ const uint8_t sprites[80] = {
     0xF0, 0x80, 0x80, 0x80, 0xF0, 0xE0, 0x90, 0x90, 0x90, 0xE0, 0xF0, 0x80,
     0xF0, 0x80, 0xF0, 0xF0, 0x80, 0xF0, 0x80, 0x80,
 };
-
-void memory_init()
-{
-  for (int i = 0; i < sizeof(sprites) / sizeof(uint8_t); i++) {
-    memory[i] = sprites[i];
-  }
-}
 
 uint8_t memory_read_byte(uint16_t address)
 {
@@ -36,4 +32,20 @@ uint16_t memory_read_opcode(uint16_t address)
 void memory_write(uint16_t address, uint8_t byte)
 {
   memory[address] = byte;
+}
+
+void memory_write_bytes(uint16_t start, uint8_t *bytes, size_t size)
+{
+  for (size_t i = 0; i < size; i++) { memory_write(start + i, bytes[i]); }
+}
+
+void memory_init()
+{
+  memory = calloc(0x10000, sizeof(uint8_t));
+  memory_write_bytes(0, sprites, sizeof(sprites));
+}
+
+void memory_destroy()
+{
+  free(memory);
 }
