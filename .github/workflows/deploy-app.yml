@@ -8,11 +8,11 @@ jobs:
       - uses: actions/checkout@v4
       - run: git clone https://github.com/emscripten-core/emsdk.git
       - run: cd emsdk && ./emsdk install latest && ./emsdk activate latest && source ./emsdk_env.sh
-      - run: mkdir app/build && ./emsdk/upstream/emscripten/emcc src/*.c -o app/build/index.html -sUSE_SDL=2 -sEXPORTED_RUNTIME_METHODS=ccall,cwrap --shell-file app/template/shell.html
+      - run: source ./wasm_build.sh ./emsdk/upstream/emscripten/emcc
       - uses: actions/upload-pages-artifact@v3
         with:
           name: github-pages
-          path: app/build
+          path: app/
   publish:
     needs: build
     runs-on: ubuntu-latest

@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
     return 1;
   }
 
-  // emulation_init(argv[1]); <-- Change that
+  // TODO: Standalone version
 #endif
 
   return 0;

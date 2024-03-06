@@ -4,6 +4,8 @@
 #include <emscripten/emscripten.h>
 #include <stdbool.h>
 
+bool isRunning;
+
 bool load_program(char name[])
 {
   FILE *file = fopen(name, "rb");
@@ -106,19 +108,16 @@ void destroy_devices()
 
 void emulation_start()
 {
+  isRunning = true;
   cpu_create();
   cpu->sync = sync;
-  emscripten_set_main_loop(one_iter, 60, 1); // <-- or 1 here idk
+  emscripten_set_main_loop(one_iter, 60, false);
 }
 
 void emulation_end()
 {
+  isRunning = false;
   destroy_devices();
   SDL_Quit();
+  emscripten_cancel_main_loop();
 }
-
-// void execute_file(char executable[])
-// {
-//   if (!load_program(executable)) { return; }
-//   // TODO: main loop for normal build target here
-// }
