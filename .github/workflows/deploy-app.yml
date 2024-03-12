@@ -6,13 +6,17 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
       - run: git clone https://github.com/emscripten-core/emsdk.git
       - run: cd emsdk && ./emsdk install latest && ./emsdk activate latest && source ./emsdk_env.sh
       - run: source ./wasm_build.sh ./emsdk/upstream/emscripten/emcc
+      - run: cd app && npm install && npm run build
       - uses: actions/upload-pages-artifact@v3
         with:
           name: github-pages
-          path: app/
+          path: app/dist
   publish:
     needs: build
     runs-on: ubuntu-latest

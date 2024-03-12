@@ -1,50 +1,13 @@
 <!DOCTYPE html>
-<html>
-  <head> </head>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vite App</title>
+  </head>
   <body>
-    <canvas id="canvas"></canvas>
-    <div>
-      <input type="file" id="input" />
-      <button onclick="execute();">Execute</button>
-    </div>
-    <script>
-      var Module = {
-        print: (...args) => console.log(args.join(" ")),
-        canvas: document.getElementById("canvas"),
-      };
-
-      Module.onRuntimeInitialized = () => {
-        console.log("can run functions here...");
-      };
-
-      const execute = async () => {
-        const initDevices = Module.cwrap("wasm_init_devices", "null", "null");
-        const memoryWriteByte = Module.cwrap("wasm_memory_write", "null", ["number", "number"]);
-        const emulationStart = Module.cwrap("wasm_emulation_start", "null", "null");
-        const emulationEnd = Module.cwrap("wasm_emulation_end", "null", "null");
-        const isRunning = Module.cwrap("wasm_is_running", "null", "number");
-
-        const { files } = document.getElementById("input");
-
-        if (files.length === 0) {
-          return console.log("file not selected");
-        }
-
-        if (isRunning()) {
-          emulationEnd();
-        }
-
-        const file = files[0];
-        const executable = new Uint8Array(await file.arrayBuffer());
-
-        initDevices();
-
-        for (let i = 0; i < executable.length; i++) {
-          memoryWriteByte(0x200 + i, executable[i]);
-        }
-        emulationStart();
-      };
-    </script>
-    <script src="build/chip8.js"></script>
+    <div id="app"></div>
+    <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

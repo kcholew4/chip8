@@ -1,0 +1,22 @@
+* {
+  margin: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  color: rgb(220, 220, 220);
+  background-color: rgb(25, 25, 25);
+  font-family: Helvetica, sans-serif;
+}
+
+#app {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-weight: normal;
+}
+
+a {
+  color: rgb(28, 150, 206);
+  text-decoration: none;
+}
