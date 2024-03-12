@@ -11,7 +11,7 @@ onMounted(async () => {
   const module = await Module({
     locateFile: (path: string, prefix: string) => {
       const url = new URL(prefix);
-      return url.origin + "/" + path;
+      return url.origin + "/chip8/" + path;
     },
     canvas: canvas.value,
     print: (...args: string[]) => console.log(args.join(" "))
