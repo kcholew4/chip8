@@ -29,5 +29,5 @@ coverage
 
 *.tsbuildinfo
 
-src/chip8.js
+src/services/chip8_module.js
 public/chip8.wasm

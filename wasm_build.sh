@@ -12,6 +12,7 @@ fi
 "$EMCC" src/*.c -o tmp/chip8.js -sMODULARIZE -sEXPORT_ES6 -sUSE_SDL=2 -sEXPORTED_RUNTIME_METHODS=ccall,cwrap
 
 cp tmp/chip8.wasm app/public
-cp tmp/chip8.js app/src
+cp tmp/chip8.js app/src/services
 
 rm -rf tmp/
+mv app/src/services/chip8.js app/src/services/chip8_module.js
