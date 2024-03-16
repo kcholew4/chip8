@@ -6,7 +6,11 @@ import RegistersMonitor from './RegistersMonitor.vue';
 
 const store = useVMStore();
 
-const v_registers = ref<number[]>(new Array(0xf).map(() => 0));
+const v_registers = ref<number[]>([]);
+
+for (let i = 0; i < 0x10; i++) {
+  v_registers.value[i] = 0;
+}
 
 const updateRegisters = () => {
   const { getV } = getExportedFunctions();
@@ -15,9 +19,10 @@ const updateRegisters = () => {
   }
 };
 
-if (!store.ready) {
-  watch(() => store.ready, updateRegisters, { once: true });
-}
+watch(
+  () => store.ready,
+  (ready) => ready && updateRegisters()
+);
 </script>
 
 <template>

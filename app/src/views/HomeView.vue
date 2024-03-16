@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { createModuleInstance, getExportedFunctions } from '@/services/chip8';
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 
 import ControlPanel from '@/components/ControlPanel.vue';
+import { useVMStore } from '@/stores/vm';
 
 const canvas = ref(null);
 let wasmExported: null | ReturnType<typeof getExportedFunctions> = null;
@@ -33,6 +34,11 @@ const execute = async () => {
     wasmExported.memoryWriteByte(0x200 + i, rom[i]);
   }
   wasmExported.emulationStart();
+
+  onUnmounted(() => {
+    const store = useVMStore();
+    store.ready = false; // Hack, change that
+  });
 };
 
 const handleFileUpload = (event: Event) => {
