@@ -2,10 +2,6 @@
 #include <stddef.h>
 #include <stdint.h>
 
-void emulation_init(char executable[]);
-
-void init_devices();
-void emulation_start();
-void emulation_end();
-
-extern bool isRunning;
+void emulation_init();
+void emulation_cleanup();
+void one_iter();

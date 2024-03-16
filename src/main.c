@@ -5,15 +5,6 @@
 
 int main(int argc, char *argv[])
 {
-#ifndef __EMSCRIPTEN__
-  if (argc != 2) {
-    printf("Usage: chip8 [program]\n");
-    return 1;
-  }
-
-  // TODO: Standalone version
-#endif
-
   return 0;
 }
 

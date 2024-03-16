@@ -2,7 +2,7 @@
 import { useVMStore } from '@/stores/vm';
 import { getExportedFunctions } from '@/services/chip8';
 import { watch, ref } from 'vue';
-import RegistersMonitor from './RegistersMonitor.vue';
+// import RegistersMonitor from './RegistersMonitor.vue';
 
 const store = useVMStore();
 

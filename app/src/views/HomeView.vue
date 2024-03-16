@@ -1,44 +1,31 @@
 <script setup lang="ts">
-import { createModuleInstance, getExportedFunctions } from '@/services/chip8';
+import { Chip8 } from '@/services/chip8';
 import { ref, onMounted, onUnmounted } from 'vue';
 
-import ControlPanel from '@/components/ControlPanel.vue';
+// import ControlPanel from '@/components/ControlPanel.vue';
 import { useVMStore } from '@/stores/vm';
 
 const canvas = ref(null);
-let wasmExported: null | ReturnType<typeof getExportedFunctions> = null;
 const executable = ref<null | File>(null);
-
-onMounted(async () => {
-  await createModuleInstance(canvas.value!); // Maybe put that in a watcher
-  wasmExported = getExportedFunctions();
-});
 
 const execute = async () => {
   if (!executable.value) {
     return console.log('nothing to execute');
   }
 
-  if (!wasmExported) {
-    return console.log('wasm module not initialized');
+  if (!canvas.value) {
+    return console.log(`canvas doesn't exist`);
   }
 
-  if (wasmExported.isRunning()) {
-    wasmExported.emulationEnd();
-  }
+  const instance = await Chip8.createInstance(canvas.value);
 
   const rom = new Uint8Array(await executable.value.arrayBuffer());
-  wasmExported.initDevices();
 
   for (let i = 0; i < rom.length; i++) {
-    wasmExported.memoryWriteByte(0x200 + i, rom[i]);
+    instance.memoryWriteByte(0x200 + i, rom[i]);
   }
-  wasmExported.emulationStart();
 
-  onUnmounted(() => {
-    const store = useVMStore();
-    store.ready = false; // Hack, change that
-  });
+  setInterval(() => instance.oneIter(), 1000 / 60);
 };
 
 const handleFileUpload = (event: Event) => {
@@ -63,7 +50,7 @@ const handleFileUpload = (event: Event) => {
       <button @click="execute()">Execute</button>
     </div>
     <div>
-      <ControlPanel />
+      <!-- <ControlPanel /> -->
     </div>
   </main>
 </template>
@@ -87,4 +74,3 @@ const handleFileUpload = (event: Event) => {
   background-color: black;
 }
 </style>
-@/chip8_module.js

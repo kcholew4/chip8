@@ -4,8 +4,6 @@
 #include <emscripten/emscripten.h>
 #include <stdbool.h>
 
-bool isRunning;
-
 bool load_program(char name[])
 {
   FILE *file = fopen(name, "rb");
@@ -62,14 +60,11 @@ void handle_key(SDL_KeyboardEvent key)
   }
 }
 
-bool quit = false;
-
 void sync()
 {
   SDL_Event e;
   while (SDL_PollEvent(&e) != 0) {
     switch (e.type) {
-    case SDL_QUIT: quit = true; break;
     case SDL_KEYDOWN: handle_key(e.key); break;
     case SDL_KEYUP: cpu->key = 0xFF;
     }
@@ -92,32 +87,19 @@ void one_iter()
   display_refresh();
 }
 
-void init_devices()
+void emulation_init()
 {
   memory_init();
   SDL_Init(SDL_INIT_VIDEO);
   display_init();
+  cpu_create();
+  cpu->sync = sync;
 }
 
-void destroy_devices()
+void emulation_cleanup()
 {
   memory_destroy();
   display_destroy();
   cpu_destroy();
-}
-
-void emulation_start()
-{
-  isRunning = true;
-  cpu_create();
-  cpu->sync = sync;
-  emscripten_set_main_loop(one_iter, 60, false);
-}
-
-void emulation_end()
-{
-  isRunning = false;
-  destroy_devices();
   SDL_Quit();
-  emscripten_cancel_main_loop();
 }
