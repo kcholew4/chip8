@@ -78,6 +78,13 @@ const handleStepClick = () => {
 
 <template>
   <main>
+    <div class="header">
+      <h1>Chip8 Virtual Machine</h1>
+      <p>
+        Classic Chip8 VM that runs in the browser. Select program from the list or upload from a
+        file to start.
+      </p>
+    </div>
     <div class="display">
       <canvas ref="canvas" id="canvas"></canvas>
     </div>
@@ -85,13 +92,13 @@ const handleStepClick = () => {
       <input type="file" @change="handleFileUpload" />
       <button @click="execute()">Execute</button>
     </div>
-    <div>
+    <div class="controls">
       <ControlPanel @step="handleStepClick"></ControlPanel>
     </div>
   </main>
 </template>
 
-<style>
+<style lang="scss" scoped>
 .container {
   max-width: 640px;
   margin-left: auto;
@@ -101,12 +108,34 @@ const handleStepClick = () => {
 .display {
   display: flex;
   justify-content: center;
-  padding: 50px 0 50px;
+  padding: 50px 0 20px;
 }
 
 .display canvas {
   width: 640px;
   height: 320px;
   background-color: black;
+  border: 1px solid #1d191e;
+}
+
+h1 {
+  font-family: 'Pixelify Sans', sans-serif;
+  font-style: normal;
+  font-weight: 700;
+  margin-bottom: 0.5em;
+}
+
+.header {
+  margin-top: 50px;
+
+  p {
+    font-family: 'Noto Sans Mono', monospace;
+    font-weight: 400;
+    max-width: 600px;
+  }
+}
+
+.controls {
+  margin-top: 50px;
 }
 </style>
