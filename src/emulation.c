@@ -55,8 +55,6 @@ void handle_key(SDL_KeyboardEvent key)
   case SDLK_x: cpu->key = 0x0; break;
   case SDLK_c: cpu->key = 0xB; break;
   case SDLK_v: cpu->key = 0xF; break;
-  case SDLK_k: cpu->step_execution = !cpu->step_execution; break;
-  case SDLK_l: cpu->paused = false; break;
   }
 }
 

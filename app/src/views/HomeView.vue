@@ -1,9 +1,6 @@
 <script setup lang="ts">
 import { Chip8 } from '@/services/chip8';
-import { ref, onMounted, onUnmounted } from 'vue';
-
-// import ControlPanel from '@/components/ControlPanel.vue';
-import { useVMStore } from '@/stores/vm';
+import { ref } from 'vue';
 
 const canvas = ref(null);
 const executable = ref<null | File>(null);
@@ -18,13 +15,7 @@ const execute = async () => {
   }
 
   const instance = await Chip8.createInstance(canvas.value);
-
-  const rom = new Uint8Array(await executable.value.arrayBuffer());
-
-  for (let i = 0; i < rom.length; i++) {
-    instance.memoryWriteByte(0x200 + i, rom[i]);
-  }
-
+  await instance.loadProgram(executable.value);
   setInterval(() => instance.oneIter(), 1000 / 60);
 };
 
@@ -49,9 +40,7 @@ const handleFileUpload = (event: Event) => {
       <input type="file" @change="handleFileUpload" />
       <button @click="execute()">Execute</button>
     </div>
-    <div>
-      <!-- <ControlPanel /> -->
-    </div>
+    <div></div>
   </main>
 </template>
 

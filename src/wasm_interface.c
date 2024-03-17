@@ -22,6 +22,21 @@ EMSCRIPTEN_KEEPALIVE void wasm_one_iter()
   one_iter();
 }
 
+EMSCRIPTEN_KEEPALIVE void wasm_normal_execution()
+{
+  cpu->step_execution = false;
+}
+
+EMSCRIPTEN_KEEPALIVE void wasm_step_execution()
+{
+  cpu->step_execution = true;
+}
+
+EMSCRIPTEN_KEEPALIVE void wasm_cpu_step()
+{
+  if (cpu->step_execution) { cpu->paused = true; }
+}
+
 EMSCRIPTEN_KEEPALIVE void wasm_memory_write(uint16_t address, uint8_t byte)
 {
   memory_write(address, byte);
