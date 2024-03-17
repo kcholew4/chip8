@@ -6,7 +6,7 @@ import ControlPanel from '@/components/ControlPanel.vue';
 
 const store = useVMStore();
 
-let interval: number;
+let interval: ReturnType<typeof window.setInterval>;
 let instance: Chip8;
 
 const canvas = ref(null);
@@ -27,7 +27,8 @@ const execute = async () => {
 
   instance = await Chip8.createInstance(canvas.value);
   await instance.loadProgram(executable.value);
-  interval = setInterval(() => instance.oneIter(), 1000 / store.speed);
+  // @ts-ignore - Type 'number' is not assignable to type 'Timeout'
+  interval = window.setInterval(() => instance.oneIter(), 1000 / store.speed);
 
   if (store.stepExecution) {
     instance.stepExecution();
@@ -40,7 +41,8 @@ watch(
     if (instance !== undefined) {
       console.log(speed);
       clearInterval(interval);
-      interval = setInterval(() => instance.oneIter(), 1000 / speed);
+      // @ts-ignore
+      interval = window.setInterval(() => instance.oneIter(), 1000 / speed);
     }
   }
 );
