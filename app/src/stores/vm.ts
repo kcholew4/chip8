@@ -3,9 +3,9 @@ import { ref } from 'vue';
 
 export const useVMStore = defineStore('vm', () => {
   const stepExecution = ref(false);
-  const ready = ref(false);
+  const speed = ref(60);
 
   const toggleStepExecution = () => (stepExecution.value = !stepExecution.value);
 
-  return { stepExecution, ready, toggleStepExecution };
+  return { stepExecution, speed, toggleStepExecution };
 });

@@ -1,11 +1,22 @@
 <script setup lang="ts">
 import { Chip8 } from '@/services/chip8';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
+import { useVMStore } from '@/stores/vm';
+import ControlPanel from '@/components/ControlPanel.vue';
+
+const store = useVMStore();
+
+let interval: number;
+let instance: Chip8;
 
 const canvas = ref(null);
 const executable = ref<null | File>(null);
 
 const execute = async () => {
+  if (instance !== undefined) {
+    clearInterval(interval);
+  }
+
   if (!executable.value) {
     return console.log('nothing to execute');
   }
@@ -14,10 +25,21 @@ const execute = async () => {
     return console.log(`canvas doesn't exist`);
   }
 
-  const instance = await Chip8.createInstance(canvas.value);
+  instance = await Chip8.createInstance(canvas.value);
   await instance.loadProgram(executable.value);
-  setInterval(() => instance.oneIter(), 1000 / 60);
+  interval = setInterval(() => instance.oneIter(), 1000 / store.speed);
 };
+
+watch(
+  () => store.speed,
+  (speed) => {
+    if (instance !== undefined) {
+      console.log(speed);
+      clearInterval(interval);
+      interval = setInterval(() => instance.oneIter(), 1000 / speed);
+    }
+  }
+);
 
 const handleFileUpload = (event: Event) => {
   const target = event.target as HTMLInputElement;
@@ -40,7 +62,9 @@ const handleFileUpload = (event: Event) => {
       <input type="file" @change="handleFileUpload" />
       <button @click="execute()">Execute</button>
     </div>
-    <div></div>
+    <div>
+      <ControlPanel></ControlPanel>
+    </div>
   </main>
 </template>
 

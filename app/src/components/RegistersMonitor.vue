@@ -2,8 +2,8 @@
 const props = defineProps<{
   V: number[];
   I: number;
-  DT: number;
-  ST: number;
+  // DT: number;
+  // ST: number;
   PC: number;
   SP: number;
 }>();
