@@ -22,6 +22,7 @@ const store = useVMStore();
         <label for="step-execution">Step execution</label>
       </div>
     </div>
+    <button v-if="store.stepExecution" @click="$emit('step')">Step</button>
   </div>
 </template>
 

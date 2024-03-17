@@ -34,7 +34,7 @@ EMSCRIPTEN_KEEPALIVE void wasm_step_execution()
 
 EMSCRIPTEN_KEEPALIVE void wasm_cpu_step()
 {
-  if (cpu->step_execution) { cpu->paused = true; }
+  if (cpu->step_execution) { cpu->paused = false; }
 }
 
 EMSCRIPTEN_KEEPALIVE void wasm_memory_write(uint16_t address, uint8_t byte)

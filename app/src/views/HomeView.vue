@@ -28,6 +28,10 @@ const execute = async () => {
   instance = await Chip8.createInstance(canvas.value);
   await instance.loadProgram(executable.value);
   interval = setInterval(() => instance.oneIter(), 1000 / store.speed);
+
+  if (store.stepExecution) {
+    instance.stepExecution();
+  }
 };
 
 watch(
@@ -37,6 +41,15 @@ watch(
       console.log(speed);
       clearInterval(interval);
       interval = setInterval(() => instance.oneIter(), 1000 / speed);
+    }
+  }
+);
+
+watch(
+  () => store.stepExecution,
+  (step) => {
+    if (instance !== undefined) {
+      step ? instance.stepExecution() : instance.normalExecution();
     }
   }
 );
@@ -51,6 +64,14 @@ const handleFileUpload = (event: Event) => {
 
   executable.value = files[0];
 };
+
+const handleStepClick = () => {
+  if (instance === undefined) {
+    return;
+  }
+
+  instance.cpuStep();
+};
 </script>
 
 <template>
@@ -63,7 +84,7 @@ const handleFileUpload = (event: Event) => {
       <button @click="execute()">Execute</button>
     </div>
     <div>
-      <ControlPanel></ControlPanel>
+      <ControlPanel @step="handleStepClick"></ControlPanel>
     </div>
   </main>
 </template>
