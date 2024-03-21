@@ -31,7 +31,7 @@ const roms = [
   {
     executable: 'MISSILE',
     title: 'Missile',
-    description: `Use 9 to shoot, with each shot the game gets faster.`
+    description: `Use 8 to shoot, with each shot the game gets faster.`
   }
 ];
 
