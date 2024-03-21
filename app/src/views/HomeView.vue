@@ -3,6 +3,7 @@ import { Chip8 } from '@/services/chip8';
 import { ref, watch } from 'vue';
 import { useVMStore } from '@/stores/vm';
 import ControlPanel from '@/components/ControlPanel.vue';
+import ProgramsList from '@/components/ProgramsList.vue';
 
 const store = useVMStore();
 
@@ -74,6 +75,11 @@ const handleStepClick = () => {
 
   instance.cpuStep();
 };
+
+const handleProgramSelect = (file: File) => {
+  executable.value = file;
+  execute();
+};
 </script>
 
 <template>
@@ -85,13 +91,21 @@ const handleStepClick = () => {
         file to start.
       </p>
     </div>
-    <div class="display">
-      <canvas ref="canvas" id="canvas"></canvas>
+    <div class="main-section">
+      <div class="display">
+        <canvas ref="canvas" id="canvas"></canvas>
+        <div class="upload-program">
+          <input type="file" @change="handleFileUpload" />
+          <button @click="execute()">Execute</button>
+        </div>
+      </div>
+      <div class="programs-list">
+        <h2>Programs</h2>
+        <p>Some public domain roms.</p>
+        <ProgramsList @select="handleProgramSelect"></ProgramsList>
+      </div>
     </div>
-    <div class="container">
-      <input type="file" @change="handleFileUpload" />
-      <button @click="execute()">Execute</button>
-    </div>
+
     <div class="controls">
       <ControlPanel @step="handleStepClick"></ControlPanel>
     </div>
@@ -99,30 +113,43 @@ const handleStepClick = () => {
 </template>
 
 <style lang="scss" scoped>
+.programs-list {
+  h2 {
+    margin-bottom: 0.5em;
+  }
+
+  p {
+    margin-bottom: 1.5rem;
+  }
+}
+
 .container {
   max-width: 640px;
   margin-left: auto;
   margin-right: auto;
 }
 
-.display {
+.main-section {
   display: flex;
   justify-content: center;
-  padding: 50px 0 20px;
+  gap: 5rem;
+  padding: 60px 0 60px;
+  align-items: center;
 }
 
-.display canvas {
-  width: 640px;
-  height: 320px;
-  background-color: black;
-  border: 1px solid #1d191e;
-}
+.display {
+  padding: 20px 0 20px;
+  canvas {
+    width: 640px;
+    height: 320px;
+    background-color: black;
+    border: 2px solid #1d191e;
+  }
 
-h1 {
-  font-family: 'Pixelify Sans', sans-serif;
-  font-style: normal;
-  font-weight: 700;
-  margin-bottom: 0.5em;
+  .upload-program {
+    margin-top: 20px;
+    position: absolute;
+  }
 }
 
 .header {
@@ -136,6 +163,14 @@ h1 {
 }
 
 .controls {
-  margin-top: 50px;
+  margin-top: 40px;
+}
+
+h1 {
+  margin-bottom: 0.5em;
+}
+
+p {
+  color: #b8b8b8;
 }
 </style>
