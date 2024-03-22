@@ -86,17 +86,17 @@ const handleProgramSelect = (file: File) => {
       </p>
     </div>
     <div class="main-section">
+      <div class="programs-list">
+        <h2>Programs</h2>
+        <p>Some public domain roms.</p>
+        <ProgramsList @select="handleProgramSelect"></ProgramsList>
+      </div>
       <div class="display">
         <VirtualDisplay @ready="(_canvas) => (canvas = _canvas)"></VirtualDisplay>
         <div class="upload-program">
           <input type="file" @change="handleFileUpload" />
           <button @click="execute()">Execute</button>
         </div>
-      </div>
-      <div class="programs-list">
-        <h2>Programs</h2>
-        <p>Some public domain roms.</p>
-        <ProgramsList @select="handleProgramSelect"></ProgramsList>
       </div>
     </div>
     <div v-if="store.showKeyboard" class="keyboard-container">
@@ -133,14 +133,14 @@ const handleProgramSelect = (file: File) => {
   margin-left: auto;
   margin-right: auto;
   display: flex;
+  flex-direction: row-reverse;
   justify-content: space-between;
   gap: 5rem;
   padding: 60px 0 60px;
   align-items: center;
 
   @media (max-width: 1400px) {
-    // display: block;
-    flex-direction: column-reverse;
+    display: block;
   }
 }
 
@@ -169,6 +169,7 @@ const handleProgramSelect = (file: File) => {
     max-width: 640px;
     margin: auto;
     margin-bottom: 2.5rem;
+    margin-top: 3rem;
   }
   .upload-program {
     margin-top: 10px;
