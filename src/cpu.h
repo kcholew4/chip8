@@ -39,3 +39,4 @@ void cpu_destroy();
 uint16_t cpu_fetch();
 void cpu_execute(uint16_t instruction);
 void cpu_cycle();
+uint64_t get_timestamp();

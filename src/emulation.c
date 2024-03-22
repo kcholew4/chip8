@@ -2,6 +2,7 @@
 #include "cpu.h"
 #include <SDL.h>
 #include <emscripten/emscripten.h>
+#include <inttypes.h>
 #include <stdbool.h>
 
 bool load_program(char name[])
@@ -69,11 +70,46 @@ void sync()
   }
 }
 
+double iterations = 0;
+int current_cycles = 12;
+uint64_t last_timestamp = 0;
+
+int freqInRange(double freq)
+{
+  const double error = 100; // Allow for 100Hz error;
+  const double target = 600;
+
+  if (freq > target + error) { return 1; }
+  if (freq < target - error) { return -1; }
+  return 0;
+}
+
 void one_iter()
 {
+  uint64_t timestamp = get_timestamp();
+
+  if (timestamp - last_timestamp > 1000) {
+    last_timestamp = timestamp;
+    iterations = 0;
+  }
+
+  double duration = timestamp - last_timestamp + 1;
+
+  iterations++;
+
+  if (iterations > 5) {
+    double freq = iterations * current_cycles / duration * 1000;
+    // printf("%f: %f, %d, %f\n", freq, iterations, current_cycles, duration);
+
+    if (freqInRange(freq) > 0) { current_cycles--; }
+
+    if (freqInRange(freq) < 0) { current_cycles++; }
+  }
+
   sync();
 
-  for (int cycles = 0; cycles < 12 && !display->pending_render; cycles++) {
+  for (int cycles = 0; cycles < current_cycles && !display->pending_render;
+       cycles++) {
     if (cpu->step_execution && !cpu->paused) {
       cpu_cycle();
       cpu->paused = true;
