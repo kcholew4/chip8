@@ -113,6 +113,19 @@ const handleProgramSelect = (file: File) => {
 </template>
 
 <style lang="scss" scoped>
+.main-section {
+  display: flex;
+  justify-content: center;
+  gap: 5rem;
+  padding: 60px 0 60px;
+  align-items: center;
+
+  @media (max-width: 1400px) {
+    flex-direction: column;
+    gap: 7rem;
+  }
+}
+
 .programs-list {
   h2 {
     margin-bottom: 0.5em;
@@ -127,14 +140,6 @@ const handleProgramSelect = (file: File) => {
   max-width: 640px;
   margin-left: auto;
   margin-right: auto;
-}
-
-.main-section {
-  display: flex;
-  justify-content: center;
-  gap: 5rem;
-  padding: 60px 0 60px;
-  align-items: center;
 }
 
 .display {

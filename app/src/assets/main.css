@@ -19,6 +19,12 @@
   font-weight: normal;
 }
 
+@media (max-width: 1400px) {
+  #app {
+    max-width: 800px;
+  }
+}
+
 a {
   color: rgb(28, 150, 206);
   text-decoration: none;
