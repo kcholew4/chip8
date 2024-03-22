@@ -1,21 +1,25 @@
 <script setup lang="ts">
 import { Chip8 } from '@/services/chip8';
-import { ref, watch } from 'vue';
+import { ref, watch, nextTick } from 'vue';
 import { useVMStore } from '@/stores/vm';
 import ControlPanel from '@/components/ControlPanel.vue';
 import ProgramsList from '@/components/ProgramsList.vue';
+import VirtualDisplay from '@/components/VirtualDisplay.vue';
 
 const store = useVMStore();
 
-let interval: ReturnType<typeof window.setInterval>;
+let mainLoopDestroy: () => void;
 let instance: Chip8;
 
-const canvas = ref(null);
+const canvas = ref<HTMLCanvasElement>();
 const executable = ref<null | File>(null);
 
 const execute = async () => {
+  store.active = true;
+  await nextTick();
+
   if (instance !== undefined) {
-    clearInterval(interval);
+    mainLoopDestroy();
   }
 
   if (!executable.value) {
@@ -28,25 +32,12 @@ const execute = async () => {
 
   instance = await Chip8.createInstance(canvas.value);
   await instance.loadProgram(executable.value);
-  // @ts-ignore - Type 'number' is not assignable to type 'Timeout'
-  interval = window.setInterval(() => instance.oneIter(), 1000 / store.speed);
+  mainLoopDestroy = instance.createMainLoop();
 
   if (store.stepExecution) {
     instance.stepExecution();
   }
 };
-
-watch(
-  () => store.speed,
-  (speed) => {
-    if (instance !== undefined) {
-      console.log(speed);
-      clearInterval(interval);
-      // @ts-ignore
-      interval = window.setInterval(() => instance.oneIter(), 1000 / speed);
-    }
-  }
-);
 
 watch(
   () => store.stepExecution,
@@ -93,7 +84,7 @@ const handleProgramSelect = (file: File) => {
     </div>
     <div class="main-section">
       <div class="display">
-        <canvas ref="canvas" id="canvas"></canvas>
+        <VirtualDisplay @ready="(_canvas) => (canvas = _canvas)"></VirtualDisplay>
         <div class="upload-program">
           <input type="file" @change="handleFileUpload" />
           <button @click="execute()">Execute</button>
@@ -113,6 +104,12 @@ const handleProgramSelect = (file: File) => {
 </template>
 
 <style lang="scss" scoped>
+.upload-program {
+  input {
+    margin-right: 0.5em;
+  }
+}
+
 .main-section {
   display: flex;
   justify-content: center;
@@ -144,13 +141,6 @@ const handleProgramSelect = (file: File) => {
 
 .display {
   padding: 20px 0 20px;
-  canvas {
-    width: 640px;
-    height: 320px;
-    background-color: black;
-    border: 2px solid #1d191e;
-  }
-
   .upload-program {
     margin-top: 20px;
     position: absolute;

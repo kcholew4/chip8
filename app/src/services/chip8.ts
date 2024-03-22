@@ -79,6 +79,36 @@ export class Chip8 {
     }
   }
 
+  public createMainLoop() {
+    let requestId: ReturnType<typeof requestAnimationFrame>;
+    let timeoutId: ReturnType<typeof setTimeout>;
+
+    let zero = performance.now();
+
+    const iteration = () => {
+      const duration = performance.now() - zero;
+      const expected = 1000 / 60;
+
+      if (duration < expected) {
+        timeoutId = setTimeout(
+          (() => {
+            this.oneIter();
+            requestId = requestAnimationFrame(iteration);
+            zero = performance.now();
+          }).bind(this),
+          expected - duration
+        );
+      }
+    };
+
+    iteration();
+
+    return () => {
+      clearTimeout(timeoutId);
+      cancelAnimationFrame(requestId);
+    };
+  }
+
   public dumpRegisters() {
     return {
       V: new Array(0x10).map((_, index) => this.getV(index)),

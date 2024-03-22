@@ -73,7 +73,7 @@ void one_iter()
 {
   sync();
 
-  for (int cycles = 0; cycles < 10 && !display->pending_render; cycles++) {
+  for (int cycles = 0; cycles < 12 && !display->pending_render; cycles++) {
     if (cpu->step_execution && !cpu->paused) {
       cpu_cycle();
       cpu->paused = true;

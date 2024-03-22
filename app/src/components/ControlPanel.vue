@@ -6,13 +6,13 @@ const store = useVMStore();
 
 <template>
   <div class="controls">
-    <div class="speed">
+    <!-- <div class="speed">
       <label for="fps">VM Speed [FPS]:</label>
       <div class="speed-slider">
         <input type="range" min="1" max="240" v-model="store.speed" />
         <div>{{ store.speed }}</div>
       </div>
-    </div>
+    </div> -->
     <div class="checkbox">
       <div class="info">
         Execution: <strong>{{ store.stepExecution ? `step` : `normal` }}</strong>
