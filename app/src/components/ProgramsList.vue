@@ -37,7 +37,7 @@ const roms = [
   }
 ];
 
-const fetchRom = (name: string) => fetch(`/chip8/games/${name}`); // TODO: Use dynamic path
+const fetchRom = (name: string) => fetch(`${import.meta.env.BASE_URL}/games/${name}`);
 
 const handleProgramClick = async (id: number) => {
   if (romsCache.has(id)) {

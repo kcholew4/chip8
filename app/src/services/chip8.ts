@@ -11,7 +11,7 @@ export class Chip8 {
         locateFile: (path: string, prefix: string) => {
           // TODO: Manual module instantiation
           const url = new URL(prefix);
-          return url.origin + '/chip8/' + path; // <-- Every time createInstance() is called this path is requested, not good :(
+          return url.origin + import.meta.env.BASE_URL + '/' + path; // <-- Every time createInstance() is called this path is requested, not good :(
         },
         print: (...args: string[]) => console.log(args.join(' '))
       })
