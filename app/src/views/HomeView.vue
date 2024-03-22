@@ -118,8 +118,7 @@ const handleProgramSelect = (file: File) => {
   align-items: center;
 
   @media (max-width: 1400px) {
-    flex-direction: column;
-    gap: 7rem;
+    display: block;
   }
 }
 
@@ -141,6 +140,13 @@ const handleProgramSelect = (file: File) => {
 
 .display {
   padding: 20px 0 20px;
+  flex-basis: 640px;
+
+  @media (max-width: 1400px) {
+    max-width: 640px;
+    margin: auto;
+    margin-bottom: 7rem;
+  }
   .upload-program {
     margin-top: 20px;
     position: absolute;
