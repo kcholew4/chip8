@@ -34,7 +34,7 @@ const store = useVMStore();
 
   .toggle {
     display: flex;
-    align-content: center;
+    align-items: center;
     gap: 0.25em;
   }
 }
