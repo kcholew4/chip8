@@ -45,6 +45,9 @@ const handlePictureInPicture = async () => {
 <template>
   <div class="video-container">
     <div class="button-container">
+      <button @click="store.showKeyboard = !store.showKeyboard">
+        {{ store.showKeyboard ? 'Hide' : 'Show' }} keyboard
+      </button>
       <button :disabled="!store.active" @click="handlePictureInPicture">Picture in Picture</button>
     </div>
     <video ref="video" autoplay></video>
@@ -62,6 +65,7 @@ const handlePictureInPicture = async () => {
     margin-bottom: 0.5em;
     display: flex;
     justify-content: end;
+    gap: 1em;
 
     button {
       border: none;

@@ -81,7 +81,8 @@ const handleProgramClick = async (id: number) => {
   border: 2px solid #1d191e;
   // padding: 25px;
   width: 400px;
-  height: 500px;
+  min-height: 400;
+  max-height: 480px;
 
   @media (max-width: 1400px) {
     width: auto;

@@ -5,8 +5,11 @@ import { useVMStore } from '@/stores/vm';
 import ControlPanel from '@/components/ControlPanel.vue';
 import ProgramsList from '@/components/ProgramsList.vue';
 import VirtualDisplay from '@/components/VirtualDisplay.vue';
+import VritualKeybaord from '@/components/VirtualKeyboard.vue';
 
 const store = useVMStore();
+
+store.active = false;
 
 let mainLoopDestroy: () => void;
 let instance: Chip8;
@@ -96,7 +99,9 @@ const handleProgramSelect = (file: File) => {
         <ProgramsList @select="handleProgramSelect"></ProgramsList>
       </div>
     </div>
-
+    <div v-if="store.showKeyboard" class="keyboard-container">
+      <VritualKeybaord></VritualKeybaord>
+    </div>
     <div class="controls">
       <ControlPanel @step="handleStepClick"></ControlPanel>
     </div>
@@ -104,6 +109,19 @@ const handleProgramSelect = (file: File) => {
 </template>
 
 <style lang="scss" scoped>
+.keyboard-container {
+  // margin-top: 80px;
+  max-width: 1120px;
+  margin-left: auto;
+  margin-right: auto;
+  // border: 2px solid #1d191e;
+  display: flex;
+  justify-content: center;
+  padding: 20px 0;
+  background-color: #090d0f;
+  border-radius: 8px;
+}
+
 .upload-program {
   input {
     margin-right: 0.5em;
@@ -111,14 +129,18 @@ const handleProgramSelect = (file: File) => {
 }
 
 .main-section {
+  max-width: 1120px;
+  margin-left: auto;
+  margin-right: auto;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   gap: 5rem;
   padding: 60px 0 60px;
   align-items: center;
 
   @media (max-width: 1400px) {
-    display: block;
+    // display: block;
+    flex-direction: column-reverse;
   }
 }
 
@@ -143,12 +165,13 @@ const handleProgramSelect = (file: File) => {
   flex-basis: 640px;
 
   @media (max-width: 1400px) {
+    flex-basis: auto;
     max-width: 640px;
     margin: auto;
-    margin-bottom: 7rem;
+    margin-bottom: 2.5rem;
   }
   .upload-program {
-    margin-top: 20px;
+    margin-top: 10px;
     position: absolute;
   }
 }
