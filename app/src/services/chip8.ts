@@ -9,8 +9,9 @@ export class Chip8 {
       await Module({
         canvas,
         locateFile: (path: string, prefix: string) => {
+          // TODO: Manual module instantiation
           const url = new URL(prefix);
-          return url.origin + '/chip8/' + path;
+          return url.origin + '/chip8/' + path; // <-- Every time createInstance() is called this path is requested, not good :(
         },
         print: (...args: string[]) => console.log(args.join(' '))
       })

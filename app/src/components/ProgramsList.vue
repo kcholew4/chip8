@@ -3,6 +3,8 @@ const emit = defineEmits<{
   (e: 'select', executable: File): void;
 }>();
 
+const romsCache: Map<number, File> = new Map(); // Maybe move this to global state?
+
 const roms = [
   {
     executable: 'INVADERS',
@@ -38,6 +40,10 @@ const roms = [
 const fetchRom = (name: string) => fetch(`/chip8/games/${name}`); // TODO: Use dynamic path
 
 const handleProgramClick = async (id: number) => {
+  if (romsCache.has(id)) {
+    return emit('select', romsCache.get(id)!);
+  }
+
   const { executable } = roms[id];
   const rom = await fetchRom(executable);
 
@@ -46,6 +52,7 @@ const handleProgramClick = async (id: number) => {
   }
 
   const file = new File([await rom.blob()], executable);
+  romsCache.set(id, file);
   emit('select', file);
 };
 </script>
