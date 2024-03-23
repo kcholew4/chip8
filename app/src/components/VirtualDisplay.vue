@@ -13,6 +13,7 @@ watch(
     if (store.active) {
       const stream = canvas.value!.captureStream();
       video.value!.srcObject = stream;
+      video.value!.play();
     }
   }
 );
@@ -50,7 +51,7 @@ const handlePictureInPicture = async () => {
       </button>
       <button :disabled="!store.active" @click="handlePictureInPicture">Picture in Picture</button>
     </div>
-    <video ref="video" autoplay></video>
+    <video ref="video" playsinline></video>
   </div>
   <canvas ref="canvas" id="canvas"></canvas>
 </template>

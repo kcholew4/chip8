@@ -119,7 +119,7 @@ const handleProgramSelect = (file: File) => {
   display: flex;
   justify-content: center;
   padding: 20px 0;
-  background-color: #090d0f;
+  background-color: #0b090b;
   border-radius: 8px;
 }
 
