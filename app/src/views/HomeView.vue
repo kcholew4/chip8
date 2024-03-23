@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Chip8 } from '@/services/chip8';
-import { ref, watch, nextTick } from 'vue';
+import { ref, watch, nextTick, onUnmounted } from 'vue';
 import { useVMStore } from '@/stores/vm';
 import ControlPanel from '@/components/ControlPanel.vue';
 import ProgramsList from '@/components/ProgramsList.vue';
@@ -9,10 +9,11 @@ import VritualKeybaord from '@/components/VirtualKeyboard.vue';
 
 const store = useVMStore();
 
-store.active = false;
+onUnmounted(() => {
+  store.mainLoopDestroy?.();
+});
 
-let mainLoopDestroy: () => void;
-let instance: Chip8;
+store.active = false;
 
 const canvas = ref<HTMLCanvasElement>();
 const executable = ref<null | File>(null);
@@ -21,8 +22,8 @@ const execute = async () => {
   store.active = true;
   await nextTick();
 
-  if (instance !== undefined) {
-    mainLoopDestroy();
+  if (store.instance !== undefined) {
+    store.mainLoopDestroy!();
   }
 
   if (!executable.value) {
@@ -33,20 +34,20 @@ const execute = async () => {
     return console.log(`canvas doesn't exist`);
   }
 
-  instance = await Chip8.createInstance(canvas.value);
-  await instance.loadProgram(executable.value);
-  mainLoopDestroy = instance.createMainLoop();
+  store.instance = await Chip8.createInstance(canvas.value);
+  await store.instance.loadProgram(executable.value);
+  store.mainLoopDestroy = store.instance.createMainLoop();
 
   if (store.stepExecution) {
-    instance.stepExecution();
+    store.instance.stepExecution();
   }
 };
 
 watch(
   () => store.stepExecution,
   (step) => {
-    if (instance !== undefined) {
-      step ? instance.stepExecution() : instance.normalExecution();
+    if (store.instance !== undefined) {
+      step ? store.instance.stepExecution() : store.instance.normalExecution();
     }
   }
 );
@@ -63,11 +64,11 @@ const handleFileUpload = (event: Event) => {
 };
 
 const handleStepClick = () => {
-  if (instance === undefined) {
+  if (store.instance === undefined) {
     return;
   }
 
-  instance.cpuStep();
+  store.instance.cpuStep();
 };
 
 const handleProgramSelect = (file: File) => {

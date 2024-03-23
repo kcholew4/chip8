@@ -1,7 +1,29 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
+import { useVMStore } from '@/stores/vm';
+
+const store = useVMStore();
 
 const keys = new Map<number, HTMLButtonElement>();
+
+const keysMapping = new Map([
+  [0, 120],
+  [1, 1],
+  [2, 2],
+  [3, 3],
+  [4, 113],
+  [5, 119],
+  [6, 101],
+  [7, 97],
+  [8, 115],
+  [9, 100],
+  [0xa, 122],
+  [0xb, 99],
+  [0xc, 4],
+  [0xd, 114],
+  [0xe, 102],
+  [0xf, 118]
+]);
 
 onMounted(() => {
   keys.forEach((value) => {
@@ -39,14 +61,19 @@ const keyGridAlignment = (number: number) => {
   }
 };
 
-const handleClick = (number: number) => {
-  console.log(number);
-  switch (number) {
-    case 4:
-      return window.dispatchEvent(new KeyboardEvent('keydown', { key: 'q' }));
-    case 6:
-      return window.dispatchEvent(new KeyboardEvent('keypress', { key: 'e' }));
+const handleClick = (number: number, type: 'up' | 'down') => {
+  const key = keysMapping.get(number);
+
+  if (!key) {
+    return;
   }
+
+  if (type === 'down') {
+    return store.instance?.keyEvent(key, 'down');
+  }
+
+  // return setTimeout(() => store.instance?.keyEvent(key, 'up'), 100);
+  store.instance?.keyEvent(key, 'up');
 };
 </script>
 <template>
@@ -56,7 +83,8 @@ const handleClick = (number: number) => {
       :key="index"
       :style="keyGridAlignment(index)"
       :ref="(el) => keys.set(index, el as HTMLButtonElement)"
-      @click="handleClick(index)"
+      @mousedown="handleClick(index, 'down')"
+      @mouseup="handleClick(index, 'up')"
     >
       {{ formatKeyNumber(index) }}
     </button>
@@ -68,10 +96,19 @@ const handleClick = (number: number) => {
   grid-template-columns: repeat(4, 50px);
   grid-template-rows: repeat(4, 50px);
   gap: 0.25em;
+  touch-action: manipulation;
 }
 
 button {
   border: 1px solid rgb(95, 95, 95);
-  // font-size: 1.25em;
+
+  &:focus,
+  &:hover {
+    background-color: #161116;
+  }
+
+  &:active {
+    background-color: #2d252d;
+  }
 }
 </style>

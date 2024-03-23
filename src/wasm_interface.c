@@ -6,6 +6,14 @@
 #include <stdint.h>
 #include <stdio.h>
 
+EMSCRIPTEN_KEEPALIVE void wasm_key_event(SDL_KeyCode key, bool up)
+{
+  SDL_Event e;
+  e.type = up ? SDL_KEYUP : SDL_KEYDOWN;
+  e.key.keysym.sym = key;
+  SDL_PushEvent(&e);
+}
+
 EMSCRIPTEN_KEEPALIVE void wasm_init()
 {
   emulation_init();

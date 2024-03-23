@@ -72,6 +72,11 @@ export class Chip8 {
     return this.module.ccall('wasm_cpu_step', null, [], []);
   }
 
+  public keyEvent(key: number, type: 'up' | 'down') {
+    const up = type === 'up';
+    return this.module.ccall('wasm_key_event', null, ['number', 'boolean'], [key, up]);
+  }
+
   public async loadProgram(program: File) {
     const bytes = new Uint8Array(await program.arrayBuffer());
     for (let i = 0; i < bytes.length; i++) {
