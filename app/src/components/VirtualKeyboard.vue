@@ -85,6 +85,8 @@ const handleClick = (number: number, type: 'up' | 'down') => {
       :ref="(el) => keys.set(index, el as HTMLButtonElement)"
       @mousedown="handleClick(index, 'down')"
       @mouseup="handleClick(index, 'up')"
+      @touchstart="handleClick(index, 'down')"
+      @touchend="handleClick(index, 'up')"
     >
       {{ formatKeyNumber(index) }}
     </button>
@@ -97,6 +99,8 @@ const handleClick = (number: number, type: 'up' | 'down') => {
   grid-template-rows: repeat(4, 50px);
   gap: 0.25em;
   touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 button {
