@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useVMStore } from '@/stores/vm';
 
 const store = useVMStore();
@@ -8,9 +8,9 @@ const keys = new Map<number, HTMLButtonElement>();
 
 const keysMapping = new Map([
   [0, 120],
-  [1, 1],
-  [2, 2],
-  [3, 3],
+  [1, 49],
+  [2, 50],
+  [3, 51],
   [4, 113],
   [5, 119],
   [6, 101],
@@ -19,15 +19,43 @@ const keysMapping = new Map([
   [9, 100],
   [0xa, 122],
   [0xb, 99],
-  [0xc, 4],
+  [0xc, 52],
   [0xd, 114],
   [0xe, 102],
   [0xf, 118]
 ]);
 
+const getVirtualKeyboardCode = (code: number) => {
+  for (const [key, value] of keysMapping.entries()) {
+    if (value === code) {
+      return key;
+    }
+  }
+};
+
+const keysPressedState = ref([...keysMapping.keys()].map(() => false));
+
 onMounted(() => {
-  keys.forEach((value) => {
-    // console.log(value);
+  document.addEventListener('keydown', (e) => {
+    const code = e.key.charCodeAt(0);
+    const virtualCode = getVirtualKeyboardCode(code);
+
+    if (virtualCode === undefined) {
+      return;
+    }
+
+    keysPressedState.value[virtualCode] = true;
+  });
+
+  document.addEventListener('keyup', (e) => {
+    const code = e.key.charCodeAt(0);
+    const virtualCode = getVirtualKeyboardCode(code);
+
+    if (virtualCode === undefined) {
+      return;
+    }
+
+    keysPressedState.value[virtualCode] = false;
   });
 });
 
@@ -72,7 +100,6 @@ const handleClick = (number: number, type: 'up' | 'down') => {
     return store.instance?.keyEvent(key, 'down');
   }
 
-  // return setTimeout(() => store.instance?.keyEvent(key, 'up'), 100);
   store.instance?.keyEvent(key, 'up');
 };
 </script>
@@ -87,6 +114,7 @@ const handleClick = (number: number, type: 'up' | 'down') => {
       @mouseup="handleClick(index, 'up')"
       @touchstart="handleClick(index, 'down')"
       @touchend="handleClick(index, 'up')"
+      :class="{ pressed: keysPressedState[index] }"
     >
       {{ formatKeyNumber(index) }}
     </button>
@@ -112,6 +140,10 @@ button {
   }
 
   &:active {
+    background-color: #2d252d;
+  }
+
+  &.pressed {
     background-color: #2d252d;
   }
 }
