@@ -103,13 +103,31 @@ const handleProgramSelect = (file: File) => {
     <div v-if="store.showKeyboard" class="keyboard-container">
       <VritualKeybaord></VritualKeybaord>
     </div>
-    <div class="controls">
-      <ControlPanel @step="handleStepClick"></ControlPanel>
-    </div>
+    <section class="debugging">
+      <h2>Debugging</h2>
+      <p>
+        I recommend turning on <strong>Picture in Picture</strong> mode when exploring this section.
+      </p>
+      <div class="control-panel">
+        <ControlPanel @step="handleStepClick"></ControlPanel>
+      </div>
+    </section>
   </main>
 </template>
 
 <style lang="scss" scoped>
+section.debugging {
+  margin-top: 40px;
+
+  h2 {
+    margin-bottom: 0.7em;
+  }
+
+  .control-panel {
+    margin-top: 2.5em;
+  }
+}
+
 .keyboard-container {
   // margin-top: 80px;
   max-width: 1120px;
@@ -147,7 +165,7 @@ const handleProgramSelect = (file: File) => {
 
 .programs-list {
   h2 {
-    margin-bottom: 0.5em;
+    margin-bottom: 0.7em;
   }
 
   p {
@@ -188,12 +206,8 @@ const handleProgramSelect = (file: File) => {
   }
 }
 
-.controls {
-  margin-top: 40px;
-}
-
 h1 {
-  margin-bottom: 0.5em;
+  margin-bottom: 0.7em;
 }
 
 p {
