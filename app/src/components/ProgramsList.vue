@@ -1,58 +1,28 @@
 <script setup lang="ts">
+import ProgramDetails from './ProgramDetails.vue';
+import InlineKey from './InlineKey.vue';
+
 const emit = defineEmits<{
   (e: 'select', executable: File): void;
 }>();
 
-const romsCache: Map<number, File> = new Map(); // Maybe move this to global state?
-
-const roms = [
-  {
-    executable: 'INVADERS',
-    title: 'Space Invaders',
-    description: `Destroy the invaders with your ship. Shoot
-                  with 5, move with 4 and 6. Press 5 to begin a game.`
-  },
-  {
-    executable: 'BRIX',
-    title: 'Brix',
-    description: `You have 5 lives, and your goal is the destruction of all the brixs.
-                  Use 4 and 6 to move your paddle. The game ends when all the brixs are destroyed.`
-  },
-  {
-    executable: 'TETRIS',
-    title: 'Tetris',
-    description: `The 4 key is left rotate, 5 - left move, 6 - right move, 1
-                  - drop, ENTER - restart, DROP - end.  After every 5 lines, the speed
-                  increases slightly and peaks at 45 lines.`
-  },
-  {
-    executable: 'MAZE',
-    title: 'Maze',
-    description: `Draws a random maze.`
-  },
-  {
-    executable: 'MISSILE',
-    title: 'Missile',
-    description: `Use 8 to shoot, with each shot the game gets faster.`
-  }
-];
+const romsCache: Map<string, File> = new Map(); // Maybe move this to global state?
 
 const fetchRom = (name: string) => fetch(`${import.meta.env.BASE_URL}/games/${name}`);
 
-const handleProgramClick = async (id: number) => {
-  if (romsCache.has(id)) {
-    return emit('select', romsCache.get(id)!);
+const handleProgramClick = async (name: string) => {
+  if (romsCache.has(name)) {
+    return emit('select', romsCache.get(name)!);
   }
 
-  const { executable } = roms[id];
-  const rom = await fetchRom(executable);
+  const rom = await fetchRom(name);
 
   if (!rom.ok) {
-    throw new Error(`Error fetching: ${executable}`);
+    throw new Error(`Error fetching: ${name}`);
   }
 
-  const file = new File([await rom.blob()], executable);
-  romsCache.set(id, file);
+  const file = new File([await rom.blob()], name);
+  romsCache.set(name, file);
   emit('select', file);
 };
 </script>
@@ -61,15 +31,34 @@ const handleProgramClick = async (id: number) => {
   <div class="programs">
     <!-- <h2>Programs</h2> -->
     <div class="programs__container">
-      <div
-        v-for="(rom, index) in roms"
-        :key="index"
-        class="program"
-        @click="handleProgramClick(index)"
-      >
-        <div class="program__title">{{ rom.title }}</div>
-        <div class="program__description">{{ rom.description.trim() }}</div>
-      </div>
+      <ProgramDetails name="INVADERS" title="Space Invaders" @click="handleProgramClick">
+        Destroy the invaders with your ship. Shoot with <InlineKey virtual_key="5" symbol="w" />,
+        move with <InlineKey virtual_key="4" symbol="q" /> and
+        <InlineKey virtual_key="6" symbol="e" />. Press <InlineKey virtual_key="5" symbol="w" /> to
+        begin a game.
+      </ProgramDetails>
+      <ProgramDetails name="BRIX" title="Brix" @click="handleProgramClick">
+        You have 5 lives, and your goal is the destruction of all the brixs. Use
+        <InlineKey virtual_key="4" symbol="q" /> and <InlineKey virtual_key="6" symbol="e" /> to
+        move your paddle. The game ends when all the brixs are destroyed.
+      </ProgramDetails>
+      <ProgramDetails name="PONG2" title="Pong" @click="handleProgramClick">
+        Use keys <InlineKey virtual_key="1" symbol="1" /> and
+        <InlineKey virtual_key="4" symbol="q" /> move left player and
+        <InlineKey virtual_key="c" symbol="4" /> and <InlineKey virtual_key="d" symbol="r" /> move
+        right player.
+      </ProgramDetails>
+      <!-- Not working as expected :D-->
+      <!-- <ProgramDetails name="TETRIS" title="Tetris" @click="handleProgramClick">
+        The 4 key is left rotate, 5 - left move, 6 - right move, 1 - drop, ENTER - restart, DROP -
+        end. After every 5 lines, the speed increases slightly and peaks at 45 lines.
+      </ProgramDetails> -->
+      <ProgramDetails name="MAZE" title="Maze" @click="handleProgramClick">
+        Draws a random maze.
+      </ProgramDetails>
+      <ProgramDetails name="MISSILE" title="Missile" @click="handleProgramClick">
+        Use <InlineKey virtual_key="8" symbol="s" /> to shoot, with each shot the game gets faster.
+      </ProgramDetails>
     </div>
   </div>
 </template>
@@ -89,34 +78,6 @@ const handleProgramClick = async (id: number) => {
     height: auto;
     max-height: 400px;
     max-width: 800px;
-  }
-}
-
-.program {
-  &:hover,
-  &:focus {
-    background-color: #131313;
-    cursor: pointer;
-  }
-
-  &:hover &__title,
-  &:focus &__title {
-    text-decoration: underline;
-  }
-
-  // font-size: 0.8rem;
-  padding: 20px 25px;
-
-  &__title {
-    font-weight: 700;
-    margin-bottom: 0.5em;
-    color: #56b6de;
-    // text-decoration: underline;
-  }
-
-  &__description {
-    font-weight: 100;
-    font-size: 0.8em;
   }
 }
 </style>

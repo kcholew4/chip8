@@ -117,7 +117,7 @@ const handleProgramSelect = (file: File) => {
 
 <style lang="scss" scoped>
 section.debugging {
-  margin-top: 40px;
+  margin-top: 80px;
 
   h2 {
     margin-bottom: 0.7em;
