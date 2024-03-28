@@ -15,12 +15,22 @@
 #app {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 2rem;
   font-weight: normal;
 }
 
 @media (max-width: 1400px) {
   #app {
+    max-width: 800px;
+  }
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+@media (max-width: 1400px) {
+  .container {
     max-width: 800px;
   }
 }
