@@ -197,7 +197,7 @@ section.debugging {
 }
 
 .header {
-  margin-top: 50px;
+  // margin-top: 50px;
 
   p {
     font-family: 'Noto Sans Mono', monospace;

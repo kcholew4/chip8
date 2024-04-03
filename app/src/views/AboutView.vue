@@ -43,8 +43,12 @@ const chip8_keyboard = `
 
 <style scoped>
 h1 {
-  margin-top: 1em;
+  /* margin-top: 1em; */
   margin-bottom: 1em;
+}
+
+p + h1 {
+  margin-top: 1em;
 }
 
 .keyboard-layout {
