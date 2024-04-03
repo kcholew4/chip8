@@ -24,7 +24,6 @@ nav > * + * {
 
 nav {
   padding: 2em;
-  background-color: black;
 
   a {
     font-family: 'Noto Sans Mono', monospace;
